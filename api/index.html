@@ -1,0 +1,50 @@
+<html>
+  <script>
+    var xmlDoc = null ;
+//unternet explorer
+  function load() {
+    if (typeof window.ActiveXObject != 'undefined' ) {
+      xmlDoc = new ActiveXObject("Microsoft.XMLHTTP");
+      xmlDoc.onreadystatechange = process ;
+    }
+    else {
+      xmlDoc = new XMLHttpRequest();
+      xmlDoc.onload = process ;
+    }
+
+
+    var countryCode = document.getElementById("input").value;
+    xmlDoc.open( "GET", "get.php?code="+countryCode, true );
+    xmlDoc.send( null );
+  }
+
+  function process() {
+    if ( xmlDoc.readyState != 4 ) return ;
+	var responseJson = JSON.parse(xmlDoc.responseText);
+	console.log('response',responseJson);
+	console.log('result',responseJson.result);
+	if (responseJson.result === "failure") {
+	  document.getElementById("result").innerHTML = "Error!: "+responseJson.message;
+	}
+	else if (responseJson.result === "success") {
+	  document.getElementById("result").innerHTML = "<h5>"+responseJson.data+"</h5>";
+	}
+	console.log("object response:",responseJson);
+    //document.getElementById("output").value = xmlDoc.responseText ;
+  }
+
+</script>
+
+<body>
+  <div style="text-align: center;">
+   <label for="input"><h3>Enter country code:</h3></label>
+   <input type="text" id="input" name="input" style="margin:auto;"><br>
+   <button onclick="load()" style="margin:auto;">Submit</button>
+   <br><br>
+   <h4>Result:</h4>
+   <div id="result"></div>
+</div>
+</body>
+
+
+</html>
